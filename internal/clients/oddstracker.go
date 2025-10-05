@@ -25,8 +25,8 @@ func NewOddsTrackerClient() *OddsTrackerClient {
 	}
 }
 
-func (c *OddsTrackerClient) GetData(ctx context.Context, params map[string]interface{}) (string, error) {
-	resp, err := c.client.Get(fmt.Sprintf("%s/api/odds", c.baseURL))
+func (c *OddsTrackerClient) GetChanges(ctx context.Context, params map[string]interface{}) (string, error) {
+	resp, err := c.client.Get(fmt.Sprintf("%s/changes", c.baseURL))
 	if err != nil {
 		return "", err
 	}

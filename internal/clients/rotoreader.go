@@ -25,8 +25,8 @@ func NewRotoReaderClient() *RotoReaderClient {
 	}
 }
 
-func (c *RotoReaderClient) GetData(ctx context.Context, params map[string]interface{}) (string, error) {
-	resp, err := c.client.Get(fmt.Sprintf("%s/api/data", c.baseURL))
+func (c *RotoReaderClient) GetFeeds(ctx context.Context, params map[string]interface{}) (string, error) {
+	resp, err := c.client.Get(fmt.Sprintf("%s/feed", c.baseURL))
 	if err != nil {
 		return "", err
 	}

@@ -8,28 +8,18 @@ func GetTools() []openai.ChatCompletionToolUnionParam {
 	return []openai.ChatCompletionToolUnionParam{
 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
 			Name:        "get_roto_data",
-			Description: openai.String("Retrieves sports data from the rotoreader service"),
+			Description: openai.String("Get the latest sports news feed from rotoreader"),
 			Parameters: openai.FunctionParameters{
-				"type": "object",
-				"properties": map[string]interface{}{
-					"query": map[string]string{
-						"type":        "string",
-						"description": "The query to retrieve data",
-					},
-				},
+				"type":       "object",
+				"properties": map[string]interface{}{},
 			},
 		}),
 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
 			Name:        "get_odds_data",
-			Description: openai.String("Retrieves betting odds from the oddstracker service"),
+			Description: openai.String("Get recent betting odds changes from oddstracker"),
 			Parameters: openai.FunctionParameters{
-				"type": "object",
-				"properties": map[string]interface{}{
-					"query": map[string]string{
-						"type":        "string",
-						"description": "The query to retrieve odds",
-					},
-				},
+				"type":       "object",
+				"properties": map[string]interface{}{},
 			},
 		}),
 	}

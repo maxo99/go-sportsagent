@@ -1,0 +1,58 @@
+// package tools
+
+// import (
+// 	"github.com/openai/openai-go/v3"
+// )
+
+// func GetTools() []openai.ChatCompletionToolUnionParam {
+// 	return []openai.ChatCompletionToolUnionParam{
+// 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+// 			Name:        "get_roto_data",
+// 			Description: openai.String("Get the latest sports news feed from rotoreader"),
+// 			Parameters: openai.FunctionParameters{
+// 				"type":       "object",
+// 				"properties": map[string]interface{}{},
+// 			},
+// 		}),
+// 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+// 			Name:        "get_odds_data",
+// 			Description: openai.String("Get recent betting odds changes from oddstracker"),
+// 			Parameters: openai.FunctionParameters{
+// 				"type":       "object",
+// 				"properties": map[string]interface{}{},
+// 			},
+// 		}),
+
+// 		// EXAMPLE: If you had an endpoint like GET /changes/{sport}
+// 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+// 			Name:        "get_odds_by_sport",
+// 			Description: openai.String("Get betting odds for a specific sport"),
+// 			Parameters: openai.FunctionParameters{
+// 				"type": "object",
+// 				"properties": map[string]interface{}{
+// 					"sport": map[string]string{
+// 						"type":        "string",
+// 						"description": "Sport name (e.g., nfl, nba, mlb)",
+// 					},
+// 				},
+// 				"required": []string{"sport"},
+// 			},
+// 		}),
+
+// 		// EXAMPLE: If you had GET /team/{team_id}/odds
+// 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+// 			Name:        "get_team_odds",
+// 			Description: openai.String("Get betting odds for a specific team"),
+// 			Parameters: openai.FunctionParameters{
+// 				"type": "object",
+// 				"properties": map[string]interface{}{
+// 					"team_id": map[string]string{
+// 						"type":        "string",
+// 						"description": "Team identifier",
+// 					},
+// 				},
+// 				"required": []string{"team_id"},
+// 			},
+// 		}),
+// 	}
+// }

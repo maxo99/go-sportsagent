@@ -77,13 +77,13 @@ func (s *AgentService) executeToolCall(ctx context.Context, toolCall openai.Chat
 
 		switch functionToolCall.Function.Name {
 		case "get_roto_data":
-			data, err := s.rotoreader.GetData(ctx, args)
+			data, err := s.rotoreader.GetFeeds(ctx, args)
 			if err != nil {
 				return fmt.Sprintf("error: %v", err)
 			}
 			return data
 		case "get_odds_data":
-			data, err := s.oddstracker.GetData(ctx, args)
+			data, err := s.oddstracker.GetChanges(ctx, args)
 			if err != nil {
 				return fmt.Sprintf("error: %v", err)
 			}

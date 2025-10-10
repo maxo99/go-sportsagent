@@ -10,7 +10,6 @@ import (
 )
 
 func TestLoadOpenAPIFromServices(t *testing.T) {
-	// Only run if INTEGRATION_TESTS is set
 	if os.Getenv("INTEGRATION_TESTS") != "1" {
 		t.Skip("Skipping integration test - set INTEGRATION_TESTS=1 to run")
 	}
@@ -20,7 +19,7 @@ func TestLoadOpenAPIFromServices(t *testing.T) {
 
 	// Test loading from oddstracker
 	t.Run("LoadFromOddsTracker", func(t *testing.T) {
-		url := "http://localhost:8000/openapi.json"
+		url := "http://localhost:8080/openapi.json"
 		spec, err := LoadOpenAPISpec(ctx, url)
 		if err != nil {
 			t.Fatalf("Failed to load OpenAPI spec from %s: %v", url, err)
@@ -63,7 +62,7 @@ func TestLoadOpenAPIFromServices(t *testing.T) {
 
 	// Test loading from rotoreader
 	t.Run("LoadFromRotoReader", func(t *testing.T) {
-		url := "http://localhost:8001/openapi.json"
+		url := "http://localhost:8081/openapi.json"
 		spec, err := LoadOpenAPISpec(ctx, url)
 		if err != nil {
 			t.Fatalf("Failed to load OpenAPI spec from %s: %v", url, err)
@@ -105,7 +104,6 @@ func TestLoadOpenAPIFromServices(t *testing.T) {
 }
 
 func TestConvertOpenAPIToOpenAITools(t *testing.T) {
-	// Only run if INTEGRATION_TESTS is set
 	if os.Getenv("INTEGRATION_TESTS") != "1" {
 		t.Skip("Skipping integration test - set INTEGRATION_TESTS=1 to run")
 	}
@@ -115,8 +113,8 @@ func TestConvertOpenAPIToOpenAITools(t *testing.T) {
 
 	// Load specs from both services
 	urls := []string{
-		"http://localhost:8000/openapi.json",
-		"http://localhost:8001/openapi.json",
+		"http://localhost:8080/openapi.json",
+		"http://localhost:8081/openapi.json",
 	}
 
 	specs, err := LoadMultipleSpecs(ctx, urls)
@@ -137,7 +135,7 @@ func TestConvertOpenAPIToOpenAITools(t *testing.T) {
 	for i, tool := range tools {
 		// Extract function details
 		toolJSON, _ := json.MarshalIndent(tool, "", "  ")
-		
+
 		t.Logf("Tool %d:\n%s\n", i+1, string(toolJSON))
 	}
 
@@ -180,7 +178,6 @@ func TestConvertOpenAPIToOpenAITools(t *testing.T) {
 }
 
 func TestGetTools(t *testing.T) {
-	// Only run if INTEGRATION_TESTS is set
 	if os.Getenv("INTEGRATION_TESTS") != "1" {
 		t.Skip("Skipping integration test - set INTEGRATION_TESTS=1 to run")
 	}

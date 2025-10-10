@@ -20,12 +20,12 @@ func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionPa
 	// Get service URLs from environment or use defaults
 	rotoreaderURL := os.Getenv("ROTOREADER_URL")
 	if rotoreaderURL == "" {
-		rotoreaderURL = "http://localhost:8001"
+		rotoreaderURL = "http://localhost:8081"
 	}
 
 	oddstrackerURL := os.Getenv("ODDSTRACKER_URL")
 	if oddstrackerURL == "" {
-		oddstrackerURL = "http://localhost:8000"
+		oddstrackerURL = "http://localhost:8080"
 	}
 
 	// Try to load OpenAPI specs from services
@@ -60,7 +60,7 @@ func getFallbackTools() []openai.ChatCompletionToolUnionParam {
 			Description: openai.String("Get the latest sports news feed from rotoreader"),
 			Parameters: openai.FunctionParameters{
 				"type":       "object",
-				"properties": map[string]interface{}{},
+				"properties": map[string]any{},
 			},
 		}),
 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
@@ -68,7 +68,7 @@ func getFallbackTools() []openai.ChatCompletionToolUnionParam {
 			Description: openai.String("Get recent betting odds changes from oddstracker"),
 			Parameters: openai.FunctionParameters{
 				"type":       "object",
-				"properties": map[string]interface{}{},
+				"properties": map[string]any{},
 			},
 		}),
 	}

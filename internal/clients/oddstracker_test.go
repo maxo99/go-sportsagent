@@ -7,14 +7,14 @@ import (
 )
 
 func TestOddsTrackerClient_Integration(t *testing.T) {
-	// if os.Getenv("INTEGRATION_TESTS") == "" {
-	// 	t.Skip("skipping integration test: set INTEGRATION_TESTS=1 to run")
-	// }
+	if os.Getenv("INTEGRATION_TESTS") == "" {
+		t.Skip("skipping integration test: set INTEGRATION_TESTS=1 to run")
+	}
 
 	client := NewOddsTrackerClient()
 	ctx := context.Background()
 
-	result, err := client.GetChanges(ctx, map[string]interface{}{})
+	result, err := client.GetChanges(ctx, map[string]any{})
 
 	if err != nil {
 		t.Fatalf("failed to get data from oddstracker: %v", err)
@@ -41,7 +41,7 @@ func TestOddsTrackerClient_URLConfiguration(t *testing.T) {
 		{
 			name:    "uses default when env var empty",
 			envURL:  "",
-			wantURL: "http://localhost:8000",
+			wantURL: "http://localhost:8080",
 		},
 	}
 

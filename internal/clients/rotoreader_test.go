@@ -7,14 +7,14 @@ import (
 )
 
 func TestRotoReaderClient_Integration(t *testing.T) {
-	// if os.Getenv("INTEGRATION_TESTS") == "" {
-	// 	t.Skip("skipping integration test: set INTEGRATION_TESTS=1 to run")
-	// }
+	if os.Getenv("INTEGRATION_TESTS") == "" {
+		t.Skip("skipping integration test: set INTEGRATION_TESTS=1 to run")
+	}
 
 	client := NewRotoReaderClient()
 	ctx := context.Background()
 
-	result, err := client.GetFeeds(ctx, map[string]interface{}{})
+	result, err := client.GetFeeds(ctx, map[string]any{})
 
 	if err != nil {
 		t.Fatalf("failed to get data from rotoreader: %v", err)
@@ -41,7 +41,7 @@ func TestRotoReaderClient_URLConfiguration(t *testing.T) {
 		{
 			name:    "uses default when env var empty",
 			envURL:  "",
-			wantURL: "http://localhost:8001",
+			wantURL: "http://localhost:8081",
 		},
 	}
 

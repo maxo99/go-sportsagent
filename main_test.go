@@ -3,13 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
 func TestQueryEndpoint(t *testing.T) {
-	t.Skip("requires OPENAI_API_KEY")
 
 	mux := setupServer()
 
@@ -25,4 +25,5 @@ func TestQueryEndpoint(t *testing.T) {
 	if w.Code != http.StatusOK && w.Code != http.StatusInternalServerError {
 		t.Errorf("unexpected status code: %d", w.Code)
 	}
+	fmt.Printf("w: %v\n", w.Body.String())
 }

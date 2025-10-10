@@ -16,7 +16,7 @@ type RotoReaderClient struct {
 func NewRotoReaderClient() *RotoReaderClient {
 	baseURL := os.Getenv("ROTOREADER_URL")
 	if baseURL == "" {
-		baseURL = "http://localhost:8001"
+		baseURL = "http://localhost:8081"
 	}
 
 	return &RotoReaderClient{

@@ -43,7 +43,7 @@ func buildParameters(operation *openapi3.Operation) openai.FunctionParameters {
 	// Start with base structure
 	params := openai.FunctionParameters{
 		"type":       "object",
-		"properties": map[string]interface{}{},
+		"properties": map[string]any{},
 	}
 
 	// If no parameters and no body, return empty object schema
@@ -51,7 +51,7 @@ func buildParameters(operation *openapi3.Operation) openai.FunctionParameters {
 		return params
 	}
 
-	properties := map[string]interface{}{}
+	properties := map[string]any{}
 	required := []string{}
 
 	// Add parameters (query, path, header)

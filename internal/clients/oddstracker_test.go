@@ -41,7 +41,7 @@ func TestOddsTrackerClient_URLConfiguration(t *testing.T) {
 		{
 			name:    "uses default when env var empty",
 			envURL:  "",
-			wantURL: "http://localhost:8080",
+			wantURL: "http://localhost:8082",
 		},
 	}
 

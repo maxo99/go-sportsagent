@@ -6,7 +6,7 @@ Agentic application using OpenAI function calling to interact with sports data s
 
 ## Architecture
 
-**Server**: HTTP server on `:8080` with `/query` endpoint
+**Server**: HTTP server on `:8082` with `/query` endpoint
 
 **Agent**: OpenAI GPT-4o with function calling - AI decides which service to call based on user query
 

@@ -25,7 +25,7 @@ func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionPa
 
 	oddstrackerURL := os.Getenv("ODDSTRACKER_URL")
 	if oddstrackerURL == "" {
-		oddstrackerURL = "http://localhost:8080"
+		oddstrackerURL = "http://localhost:8082"
 	}
 
 	// Try to load OpenAPI specs from services

@@ -19,7 +19,7 @@ func TestLoadOpenAPIFromServices(t *testing.T) {
 
 	// Test loading from oddstracker
 	t.Run("LoadFromOddsTracker", func(t *testing.T) {
-		url := "http://localhost:8080/openapi.json"
+		url := "http://localhost:8082/openapi.json"
 		spec, err := LoadOpenAPISpec(ctx, url)
 		if err != nil {
 			t.Fatalf("Failed to load OpenAPI spec from %s: %v", url, err)
@@ -113,7 +113,7 @@ func TestConvertOpenAPIToOpenAITools(t *testing.T) {
 
 	// Load specs from both services
 	urls := []string{
-		"http://localhost:8080/openapi.json",
+		"http://localhost:8082/openapi.json",
 		"http://localhost:8081/openapi.json",
 	}
 

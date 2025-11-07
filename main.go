@@ -6,6 +6,7 @@ import (
 	"sportsagent/internal/handlers"
 
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func setupServer() *http.ServeMux {
@@ -15,6 +16,7 @@ func setupServer() *http.ServeMux {
 	mux.HandleFunc("/query", handler.HandleQuery)
 	mux.HandleFunc("/tools", toolsHandler.HandleGetTools)
 	mux.HandleFunc("/healthz", handlers.HandleHealth)
+	mux.Handle("/metrics", promhttp.Handler())
 	return mux
 }
 

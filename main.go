@@ -11,7 +11,9 @@ import (
 func setupServer() *http.ServeMux {
 	mux := http.NewServeMux()
 	handler := handlers.NewAgentHandler()
+	toolsHandler := handlers.NewToolsHandler()
 	mux.HandleFunc("/query", handler.HandleQuery)
+	mux.HandleFunc("/tools", toolsHandler.HandleGetTools)
 	mux.HandleFunc("/healthz", handlers.HandleHealth)
 	return mux
 }

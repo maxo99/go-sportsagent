@@ -49,3 +49,40 @@ func TestHealthEndpoint(t *testing.T) {
 		t.Fatalf("unexpected status value: %s", payload["status"])
 	}
 }
+
+func TestToolsEndpoint(t *testing.T) {
+	mux := setupServer()
+
+	req := httptest.NewRequest(http.MethodGet, "/tools", nil)
+	w := httptest.NewRecorder()
+
+	mux.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("unexpected status code: %d", w.Code)
+	}
+
+	var payload map[string]interface{}
+	if err := json.NewDecoder(w.Body).Decode(&payload); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+
+	if _, ok := payload["tools"]; !ok {
+		t.Fatalf("missing 'tools' field in response")
+	}
+
+	if _, ok := payload["count"]; !ok {
+		t.Fatalf("missing 'count' field in response")
+	}
+
+	count, ok := payload["count"].(float64)
+	if !ok {
+		t.Fatalf("count is not a number")
+	}
+
+	if count < 0 {
+		t.Fatalf("count should be non-negative, got: %v", count)
+	}
+
+	fmt.Printf("Tools endpoint returned %v tools\n", count)
+}

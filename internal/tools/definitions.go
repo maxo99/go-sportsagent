@@ -18,12 +18,12 @@ func GetTools() []openai.ChatCompletionToolUnionParam {
 // GetToolsWithContext loads tools with a custom context (useful for timeouts)
 func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionParam {
 	// Get service URLs from environment or use defaults
-	rotoreaderURL := os.Getenv("ROTOREADER_URL")
+	rotoreaderURL := os.Getenv("ROTOREADER_SERVICE_URL")
 	if rotoreaderURL == "" {
 		rotoreaderURL = "http://localhost:8081"
 	}
 
-	oddstrackerURL := os.Getenv("ODDSTRACKER_URL")
+	oddstrackerURL := os.Getenv("ODDSTRACKER_SERVICE_URL")
 	if oddstrackerURL == "" {
 		oddstrackerURL = "http://localhost:8082"
 	}

@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/maxo99/go-sportsagent/compare/v1.0.1...v1.0.2) (2025-11-09)
+
+
+### Bug Fixes
+
+* adding readme ([b6ed5fb](https://github.com/maxo99/go-sportsagent/commit/b6ed5fb6f9cd3020bc661948d95c5bda566d64bb))
+
 ## [1.0.1](https://github.com/maxo99/go-sportsagent/compare/v1.0.0...v1.0.1) (2025-11-09)
 
 

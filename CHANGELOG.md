@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/maxo99/go-sportsagent/compare/v0.1.1...v0.1.2) (2025-11-09)
+
+
+### Bug Fixes
+
+* adding route skips to functiontools converter ([b121867](https://github.com/maxo99/go-sportsagent/commit/b121867a46bdebc93da96f821c16cb9ddeedf643))
+
 ## [0.1.1](https://github.com/maxo99/go-sportsagent/compare/v0.1.0...v0.1.1) (2025-11-09)
 
 

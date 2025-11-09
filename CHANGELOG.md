@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/maxo99/go-sportsagent/compare/v1.0.0...v1.0.1) (2025-11-09)
+
+
+### Bug Fixes
+
+* updating semantic release strategy ([f46436f](https://github.com/maxo99/go-sportsagent/commit/f46436fa22820b5f7ff9c508b6f0107e645b9f4d))
+
 # 1.0.0 (2025-11-09)
 
 

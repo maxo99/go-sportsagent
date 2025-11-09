@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"sportsagent/internal/handlers"
-
+	"sportsagent/internal/version"
 	"github.com/joho/godotenv"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -25,7 +25,7 @@ func main() {
 
 	mux := setupServer()
 
-	log.Println("Starting server on :8082")
+	log.Println("Starting GoSportsAgent version:", version.Version, "server on :8082")
 	if err := http.ListenAndServe(":8082", mux); err != nil {
 		log.Fatal(err)
 	}

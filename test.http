@@ -1,0 +1,4 @@
+
+@GOSPORTSAGENT = http://localhost:8082
+
+GET {{GOSPORTSAGENT}}/healthz

@@ -43,7 +43,7 @@ checksum:
   name_template: 'checksums.txt'
 
 changelog:
-  skip: true # We use semantic-release for changelog
+  disable: true
 
 release:
   github:

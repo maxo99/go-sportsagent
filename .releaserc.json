@@ -2,12 +2,14 @@
   "branches": [
     "main"
   ],
+  "tagFormat": "v${version}",
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
       {
         "preset": "angular",
         "releaseRules": [
+          { "breaking": true, "release": "minor" },
           { "type": "feat", "release": "minor" },
           { "type": "fix", "release": "patch" },
           { "type": "perf", "release": "patch" },
@@ -65,6 +67,5 @@
         ]
       }
     ]
-  ],
-  "tagFormat": "v${version}"
+  ]
 }

@@ -2,6 +2,7 @@ package tools
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/openai/openai-go/v3"
@@ -10,10 +11,7 @@ import (
 // ConvertOpenAPIToTools converts OpenAPI specifications to OpenAI function tool definitions
 func ConvertOpenAPIToTools(specs []*openapi3.T) []openai.ChatCompletionToolUnionParam {
 	tools := []openai.ChatCompletionToolUnionParam{}
-	skipOperationIDs := map[string]struct{}{
-		"metrics": {},
-		"health":  {},
-	}
+	skipOperationTerms := []string{"metrics", "health"}
 
 	for _, spec := range specs {
 		for _, pathItem := range spec.Paths.Map() {
@@ -22,7 +20,7 @@ func ConvertOpenAPIToTools(specs []*openapi3.T) []openai.ChatCompletionToolUnion
 					continue
 				}
 
-				if _, skip := skipOperationIDs[operation.OperationID]; skip {
+				if shouldSkipOperation(operation.OperationID, skipOperationTerms) {
 					continue
 				}
 
@@ -45,6 +43,21 @@ func ConvertOpenAPIToTools(specs []*openapi3.T) []openai.ChatCompletionToolUnion
 	}
 
 	return tools
+}
+
+func shouldSkipOperation(operationID string, skipTerms []string) bool {
+	if operationID == "" {
+		return false
+	}
+
+	lowerID := strings.ToLower(operationID)
+	for _, term := range skipTerms {
+		if strings.Contains(lowerID, term) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func buildParameters(operation *openapi3.Operation) openai.FunctionParameters {

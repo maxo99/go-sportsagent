@@ -1,7 +1,5 @@
 {
-  "branches": [
-    "main"
-  ],
+  "branches": ["main"],
   "tagFormat": "v${version}",
   "plugins": [
     [
@@ -9,7 +7,6 @@
       {
         "preset": "angular",
         "releaseRules": [
-          { "breaking": true, "release": "minor" },
           { "type": "feat", "release": "minor" },
           { "type": "fix", "release": "patch" },
           { "type": "perf", "release": "patch" },
@@ -20,24 +17,10 @@
           { "type": "style", "release": false },
           { "type": "refactor", "release": false },
           { "type": "test", "release": false }
-        ],
-        "parserOpts": {
-          "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
-        }
+        ]
       }
     ],
-    [
-      "@semantic-release/release-notes-generator",
-      {
-        "preset": "angular",
-        "parserOpts": {
-          "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
-        },
-        "writerOpts": {
-          "commitsSort": ["subject", "scope"]
-        }
-      }
-    ],
+    "@semantic-release/release-notes-generator",
     [
       "@semantic-release/changelog",
       {

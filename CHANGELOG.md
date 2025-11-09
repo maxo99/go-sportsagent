@@ -5,6 +5,13 @@
 
 * sem ver ([bce6b4d](https://github.com/maxo99/go-sportsagent/commit/bce6b4dc4d3ef23fb0ccc1a27f02402bfdacece5))
 
+## [1.0.1](https://github.com/maxo99/go-sportsagent/compare/v1.0.0...v1.0.1) (2025-11-09)
+
+
+### Bug Fixes
+
+* sem ver ([bce6b4d](https://github.com/maxo99/go-sportsagent/commit/bce6b4dc4d3ef23fb0ccc1a27f02402bfdacece5))
+
 # 1.0.0 (2025-11-09)
 
 

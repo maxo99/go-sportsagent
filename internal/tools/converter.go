@@ -10,11 +10,19 @@ import (
 // ConvertOpenAPIToTools converts OpenAPI specifications to OpenAI function tool definitions
 func ConvertOpenAPIToTools(specs []*openapi3.T) []openai.ChatCompletionToolUnionParam {
 	tools := []openai.ChatCompletionToolUnionParam{}
+	skipOperationIDs := map[string]struct{}{
+		"metrics": {},
+		"health":  {},
+	}
 
 	for _, spec := range specs {
 		for _, pathItem := range spec.Paths.Map() {
 			for _, operation := range pathItem.Operations() {
 				if operation == nil || operation.OperationID == "" {
+					continue
+				}
+
+				if _, skip := skipOperationIDs[operation.OperationID]; skip {
 					continue
 				}
 

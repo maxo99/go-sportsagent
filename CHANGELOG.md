@@ -1,3 +1,23 @@
+# 1.0.0 (2025-11-09)
+
+
+### Bug Fixes
+
+* updates to service url routing configs ([0c1614b](https://github.com/maxo99/go-sportsagent/commit/0c1614bdf7f866e3fdc4e5c2ddb8f07fb9f53eea))
+* updating routes and .env loading for tests ([00454ea](https://github.com/maxo99/go-sportsagent/commit/00454eab9021cb1df6981a68669b61c32dfdeb3f))
+* updating semantic release strategy ([f46436f](https://github.com/maxo99/go-sportsagent/commit/f46436fa22820b5f7ff9c508b6f0107e645b9f4d))
+
+
+### Features
+
+* addition of function defintions from openapi spec ([07df112](https://github.com/maxo99/go-sportsagent/commit/07df1124dc38dea1e363d4f3adb7ea0f985bc573))
+* api to get available tools ([4ff50e7](https://github.com/maxo99/go-sportsagent/commit/4ff50e7fc102c95fedbd18928027086c6c115fb8))
+* inclusion of healthz API for k8s probes ([5ceb8e5](https://github.com/maxo99/go-sportsagent/commit/5ceb8e5766d319684ad294fe29ff87f7759e75c8))
+* inclusion of prometheus metrics api ([96ca7f2](https://github.com/maxo99/go-sportsagent/commit/96ca7f20de14cce2cd51618e62db5bc3b993f20c))
+* inclusion of semantic release + version for healthz response ([026ca83](https://github.com/maxo99/go-sportsagent/commit/026ca8305dce9a3858ed3892326d81b0a80989b7))
+* initial agentic implementation structure ([bab788f](https://github.com/maxo99/go-sportsagent/commit/bab788f46a4c4879c97f27541c98f14193132212))
+* updating API defintions for tool definitions ([62b15d1](https://github.com/maxo99/go-sportsagent/commit/62b15d11d4f828738ff26c62d64b2192d2665804))
+
 ## [1.0.1](https://github.com/maxo99/go-sportsagent/compare/v1.0.0...v1.0.1) (2025-11-09)
 
 

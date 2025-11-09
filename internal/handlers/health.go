@@ -3,10 +3,13 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+
+	"sportsagent/internal/version"
 )
 
 type healthResponse struct {
-	Status string `json:"status"`
+	Status  string `json:"status"`
+	Version string `json:"version,omitempty"`
 }
 
 // HandleHealth returns a static response so infrastructure can verify the process is running.
@@ -17,5 +20,5 @@ func HandleHealth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(healthResponse{Status: "ok"})
+	json.NewEncoder(w).Encode(healthResponse{Status: "ok", Version: version.Version})
 }

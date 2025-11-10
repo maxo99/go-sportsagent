@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"sportsagent/internal/clients"
 	"sportsagent/internal/tools"
@@ -30,6 +31,8 @@ func NewAgentService() *AgentService {
 }
 
 func (s *AgentService) ProcessQuery(ctx context.Context, query string) (string, error) {
+	log.Printf("AgentService: processing query (len=%d)", len(query))
+
 	messages := []openai.ChatCompletionMessageParamUnion{
 		openai.UserMessage(query),
 	}
@@ -40,13 +43,16 @@ func (s *AgentService) ProcessQuery(ctx context.Context, query string) (string, 
 		Tools:    s.tools,
 	})
 	if err != nil {
+		log.Printf("AgentService: chat completion error: %v", err)
 		return "", err
 	}
 
 	choice := response.Choices[0]
+	log.Printf("AgentService: received completion (finishReason=%s, toolCalls=%d)", choice.FinishReason, len(choice.Message.ToolCalls))
 
 	if choice.FinishReason == "tool_calls" {
 		for _, toolCall := range choice.Message.ToolCalls {
+			log.Printf("AgentService: handling tool call id=%s type=%s", toolCall.ID, toolCall.Type)
 			result := s.executeToolCall(ctx, toolCall)
 
 			messages = append(messages, choice.Message.ToParam())
@@ -71,25 +77,30 @@ func (s *AgentService) executeToolCall(ctx context.Context, toolCall openai.Chat
 	switch toolCall.Type {
 	case "function":
 		functionToolCall := toolCall.AsFunction()
+		log.Printf("AgentService: executing function tool %s", functionToolCall.Function.Name)
 
 		var args map[string]interface{}
 		json.Unmarshal([]byte(functionToolCall.Function.Arguments), &args)
 
 		if serviceName, ok := tools.GetToolService(functionToolCall.Function.Name); ok {
+			log.Printf("AgentService: resolved service %s for tool %s", serviceName, functionToolCall.Function.Name)
 			switch serviceName {
 			case tools.ServiceRotoReader:
 				data, err := s.rotoreader.GetFeeds(ctx, args)
 				if err != nil {
+					log.Printf("AgentService: rotoreader error for %s: %v", functionToolCall.Function.Name, err)
 					return fmt.Sprintf("error: %v", err)
 				}
 				return data
 			case tools.ServiceOddsTracker:
 				data, err := s.oddstracker.GetChanges(ctx, args)
 				if err != nil {
+					log.Printf("AgentService: oddstracker error for %s: %v", functionToolCall.Function.Name, err)
 					return fmt.Sprintf("error: %v", err)
 				}
 				return data
 			default:
+				log.Printf("AgentService: unsupported service %s for tool %s", serviceName, functionToolCall.Function.Name)
 				return fmt.Sprintf("error: unsupported service %s", serviceName)
 			}
 		}
@@ -108,9 +119,11 @@ func (s *AgentService) executeToolCall(ctx context.Context, toolCall openai.Chat
 			}
 			return data
 		default:
+			log.Printf("AgentService: unknown function tool %s", functionToolCall.Function.Name)
 			return "unknown function"
 		}
 	default:
+		log.Printf("AgentService: unsupported tool type %s", toolCall.Type)
 		return "unsupported tool type"
 	}
 }

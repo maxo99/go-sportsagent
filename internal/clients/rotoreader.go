@@ -8,6 +8,8 @@ import (
 	"os"
 
 	"sportsagent/internal/tools"
+
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 type RotoReaderClient struct {
@@ -23,7 +25,9 @@ func NewRotoReaderClient() *RotoReaderClient {
 
 	return &RotoReaderClient{
 		baseURL: baseURL,
-		client:  &http.Client{},
+		client: &http.Client{
+			Transport: otelhttp.NewTransport(http.DefaultTransport),
+		},
 	}
 }
 

@@ -8,6 +8,8 @@ import (
 	"os"
 
 	"sportsagent/internal/tools"
+
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 type OddsTrackerClient struct {
@@ -23,7 +25,9 @@ func NewOddsTrackerClient() *OddsTrackerClient {
 
 	return &OddsTrackerClient{
 		baseURL: baseURL,
-		client:  &http.Client{},
+		client: &http.Client{
+			Transport: otelhttp.NewTransport(http.DefaultTransport),
+		},
 	}
 }
 

@@ -1,3 +1,15 @@
+# [0.3.0](https://github.com/maxo99/go-sportsagent/compare/v0.2.0...v0.3.0) (2025-11-10)
+
+
+### Bug Fixes
+
+* updating tool definition construction for dynamic resolution ([b7c62fa](https://github.com/maxo99/go-sportsagent/commit/b7c62fa78ec27d2c102361c98e542f46be22c64b))
+
+
+### Features
+
+* inclusion of opentelemetry propogation of traces ([49d500e](https://github.com/maxo99/go-sportsagent/commit/49d500ebf4dab0b37a2507ad374e3ffb2f3a6865))
+
 # [0.2.0](https://github.com/maxo99/go-sportsagent/compare/v0.1.3...v0.2.0) (2025-11-10)
 
 

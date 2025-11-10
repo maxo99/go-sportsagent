@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 	"testing"
+
+	"sportsagent/internal/tools"
 )
 
 func TestOddsTrackerClient_Integration(t *testing.T) {
@@ -13,8 +15,9 @@ func TestOddsTrackerClient_Integration(t *testing.T) {
 
 	client := NewOddsTrackerClient()
 	ctx := context.Background()
+	tools.GetTools()
 
-	result, err := client.GetChanges(ctx, map[string]any{})
+	result, err := client.ExecuteOperation(ctx, "get_odds_data", map[string]any{})
 
 	if err != nil {
 		t.Fatalf("failed to get data from oddstracker: %v", err)

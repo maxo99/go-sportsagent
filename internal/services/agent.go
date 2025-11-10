@@ -82,46 +82,31 @@ func (s *AgentService) executeToolCall(ctx context.Context, toolCall openai.Chat
 		var args map[string]interface{}
 		json.Unmarshal([]byte(functionToolCall.Function.Arguments), &args)
 
-		if serviceName, ok := tools.GetToolService(functionToolCall.Function.Name); ok {
-			log.Printf("AgentService: resolved service %s for tool %s", serviceName, functionToolCall.Function.Name)
-			switch serviceName {
+		if metadata, ok := tools.GetToolMetadata(functionToolCall.Function.Name); ok {
+			log.Printf("AgentService: resolved service %s for tool %s (method=%s path=%s)", metadata.Service, functionToolCall.Function.Name, metadata.Method, metadata.Path)
+			switch metadata.Service {
 			case tools.ServiceRotoReader:
-				data, err := s.rotoreader.GetFeeds(ctx, args)
+				data, err := s.rotoreader.ExecuteOperation(ctx, functionToolCall.Function.Name, args)
 				if err != nil {
 					log.Printf("AgentService: rotoreader error for %s: %v", functionToolCall.Function.Name, err)
 					return fmt.Sprintf("error: %v", err)
 				}
 				return data
 			case tools.ServiceOddsTracker:
-				data, err := s.oddstracker.GetChanges(ctx, args)
+				data, err := s.oddstracker.ExecuteOperation(ctx, functionToolCall.Function.Name, args)
 				if err != nil {
 					log.Printf("AgentService: oddstracker error for %s: %v", functionToolCall.Function.Name, err)
 					return fmt.Sprintf("error: %v", err)
 				}
 				return data
 			default:
-				log.Printf("AgentService: unsupported service %s for tool %s", serviceName, functionToolCall.Function.Name)
-				return fmt.Sprintf("error: unsupported service %s", serviceName)
+				log.Printf("AgentService: unsupported service %s for tool %s", metadata.Service, functionToolCall.Function.Name)
+				return fmt.Sprintf("error: unsupported service %s", metadata.Service)
 			}
 		}
 
-		switch functionToolCall.Function.Name {
-		case "get_roto_data":
-			data, err := s.rotoreader.GetFeeds(ctx, args)
-			if err != nil {
-				return fmt.Sprintf("error: %v", err)
-			}
-			return data
-		case "get_odds_data":
-			data, err := s.oddstracker.GetChanges(ctx, args)
-			if err != nil {
-				return fmt.Sprintf("error: %v", err)
-			}
-			return data
-		default:
-			log.Printf("AgentService: unknown function tool %s", functionToolCall.Function.Name)
-			return "unknown function"
-		}
+		log.Printf("AgentService: unknown function tool %s", functionToolCall.Function.Name)
+		return "unknown function"
 	default:
 		log.Printf("AgentService: unsupported tool type %s", toolCall.Type)
 		return "unsupported tool type"

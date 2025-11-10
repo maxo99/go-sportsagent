@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"sportsagent/internal/tools"
 )
 
 type OddsTrackerClient struct {
@@ -25,8 +27,13 @@ func NewOddsTrackerClient() *OddsTrackerClient {
 	}
 }
 
-func (c *OddsTrackerClient) GetChanges(ctx context.Context, params map[string]interface{}) (string, error) {
-	resp, err := c.client.Get(fmt.Sprintf("%s/changes", c.baseURL))
+func (c *OddsTrackerClient) CallOperation(ctx context.Context, metadata tools.ToolMetadata, params map[string]interface{}) (string, error) {
+	req, err := tools.BuildHTTPRequest(ctx, c.baseURL, metadata, params)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return "", err
 	}
@@ -38,4 +45,13 @@ func (c *OddsTrackerClient) GetChanges(ctx context.Context, params map[string]in
 	}
 
 	return string(body), nil
+}
+
+func (c *OddsTrackerClient) ExecuteOperation(ctx context.Context, operationID string, params map[string]interface{}) (string, error) {
+	metadata, ok := tools.GetToolMetadata(operationID)
+	if !ok {
+		return "", fmt.Errorf("no metadata registered for operation %s", operationID)
+	}
+
+	return c.CallOperation(ctx, metadata, params)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/openai/openai-go/v3"
@@ -59,10 +60,18 @@ func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionPa
 
 // getFallbackTools returns hardcoded tool definitions as a fallback
 func getFallbackTools() []openai.ChatCompletionToolUnionParam {
-	resetToolServiceMappings()
+	resetToolMetadata()
 
-	registerToolService("get_roto_data", ServiceRotoReader)
-	registerToolService("get_odds_data", ServiceOddsTracker)
+	registerToolMetadata("get_roto_data", ToolMetadata{
+		Service: ServiceRotoReader,
+		Method:  http.MethodGet,
+		Path:    "/feed",
+	})
+	registerToolMetadata("get_odds_data", ToolMetadata{
+		Service: ServiceOddsTracker,
+		Method:  http.MethodGet,
+		Path:    "/changes",
+	})
 
 	return []openai.ChatCompletionToolUnionParam{
 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{

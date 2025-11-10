@@ -3,54 +3,24 @@ package tools
 import (
 	"encoding/json"
 	"strings"
-	"sync"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/openai/openai-go/v3"
 )
 
-var (
-	toolServiceMap   = map[string]string{}
-	toolServiceMapMu sync.RWMutex
-)
-
-func resetToolServiceMappings() {
-	toolServiceMapMu.Lock()
-	defer toolServiceMapMu.Unlock()
-
-	toolServiceMap = map[string]string{}
-}
-
-func registerToolService(operationID, service string) {
-	if operationID == "" || service == "" {
-		return
-	}
-
-	toolServiceMapMu.Lock()
-	toolServiceMap[operationID] = service
-	toolServiceMapMu.Unlock()
-}
-
-func GetToolService(operationID string) (string, bool) {
-	toolServiceMapMu.RLock()
-	service, ok := toolServiceMap[operationID]
-	toolServiceMapMu.RUnlock()
-	return service, ok
-}
-
 // ConvertOpenAPIToTools converts OpenAPI specifications to OpenAI function tool definitions
 func ConvertOpenAPIToTools(specs []ServiceSpec) []openai.ChatCompletionToolUnionParam {
 	tools := []openai.ChatCompletionToolUnionParam{}
 	skipOperationTerms := []string{"metrics", "health"}
-	resetToolServiceMappings()
+	resetToolMetadata()
 
 	for _, serviceSpec := range specs {
 		if serviceSpec.Spec == nil {
 			continue
 		}
 
-		for _, pathItem := range serviceSpec.Spec.Paths.Map() {
-			for _, operation := range pathItem.Operations() {
+		for path, pathItem := range serviceSpec.Spec.Paths.Map() {
+			for method, operation := range pathItem.Operations() {
 				if operation == nil || operation.OperationID == "" {
 					continue
 				}
@@ -68,7 +38,8 @@ func ConvertOpenAPIToTools(specs []ServiceSpec) []openai.ChatCompletionToolUnion
 				// Convert parameters - OpenAPI schema is already JSON Schema compatible
 				params := buildParameters(operation)
 
-				registerToolService(operation.OperationID, serviceSpec.Service)
+				metadata := buildToolMetadata(serviceSpec.Service, path, method, pathItem, operation)
+				registerToolMetadata(operation.OperationID, metadata)
 
 				tools = append(tools, openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
 					Name:        operation.OperationID,
@@ -80,6 +51,66 @@ func ConvertOpenAPIToTools(specs []ServiceSpec) []openai.ChatCompletionToolUnion
 	}
 
 	return tools
+}
+
+func buildToolMetadata(service, path, method string, pathItem *openapi3.PathItem, operation *openapi3.Operation) ToolMetadata {
+	metadata := ToolMetadata{
+		Service: service,
+		Method:  strings.ToUpper(method),
+		Path:    path,
+	}
+
+	for _, param := range collectParameters(pathItem, operation) {
+		if param == nil {
+			continue
+		}
+
+		definition := ParameterDefinition{
+			Name:     param.Name,
+			Required: param.Required,
+		}
+
+		switch param.In {
+		case openapi3.ParameterInPath:
+			definition.In = ParameterInPath
+			metadata.PathParams = append(metadata.PathParams, definition)
+		case openapi3.ParameterInQuery:
+			definition.In = ParameterInQuery
+			metadata.QueryParams = append(metadata.QueryParams, definition)
+		case openapi3.ParameterInHeader:
+			definition.In = ParameterInHeader
+		}
+	}
+
+	if operation.RequestBody != nil && operation.RequestBody.Value != nil {
+		if content := operation.RequestBody.Value.Content.Get("application/json"); content != nil {
+			metadata.HasJSONBody = true
+		}
+	}
+
+	return metadata
+}
+
+func collectParameters(pathItem *openapi3.PathItem, operation *openapi3.Operation) []*openapi3.Parameter {
+	params := []*openapi3.Parameter{}
+
+	if pathItem != nil {
+		for _, paramRef := range pathItem.Parameters {
+			if paramRef != nil && paramRef.Value != nil {
+				params = append(params, paramRef.Value)
+			}
+		}
+	}
+
+	if operation != nil {
+		for _, paramRef := range operation.Parameters {
+			if paramRef != nil && paramRef.Value != nil {
+				params = append(params, paramRef.Value)
+			}
+		}
+	}
+
+	return params
 }
 
 func shouldSkipOperation(operationID string, skipTerms []string) bool {

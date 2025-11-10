@@ -31,8 +31,18 @@ func TestConvertOpenAPIToToolsRegistersServices(t *testing.T) {
 		t.Fatal("expected tools to be generated")
 	}
 
-	if service, ok := GetToolService("collect_sportevents"); !ok || service != ServiceOddsTracker {
-		t.Fatalf("expected collect_sportevents to map to odds tracker, got ok=%v service=%s", ok, service)
+	metadata, ok := GetToolMetadata("collect_sportevents")
+	if !ok {
+		t.Fatal("expected metadata for collect_sportevents")
+	}
+	if metadata.Service != ServiceOddsTracker {
+		t.Fatalf("expected collect_sportevents to map to odds tracker, got %s", metadata.Service)
+	}
+	if metadata.Path != "/collect" {
+		t.Fatalf("expected collect_sportevents path to be /collect, got %s", metadata.Path)
+	}
+	if metadata.Method != "POST" {
+		t.Fatalf("expected collect_sportevents method POST, got %s", metadata.Method)
 	}
 
 	for _, tool := range tools {
@@ -46,7 +56,7 @@ func TestConvertOpenAPIToToolsRegistersServices(t *testing.T) {
 			t.Fatalf("unexpected function %s returned in tool list", fn.Name)
 		}
 
-		if service, ok := GetToolService(fn.Name); !ok || service == "" {
+		if meta, ok := GetToolMetadata(fn.Name); !ok || meta.Service == "" {
 			t.Fatalf("missing service mapping for function %s", fn.Name)
 		}
 	}

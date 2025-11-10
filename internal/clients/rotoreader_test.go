@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 	"testing"
+
+	"sportsagent/internal/tools"
 )
 
 func TestRotoReaderClient_Integration(t *testing.T) {
@@ -13,8 +15,9 @@ func TestRotoReaderClient_Integration(t *testing.T) {
 
 	client := NewRotoReaderClient()
 	ctx := context.Background()
+	tools.GetTools()
 
-	result, err := client.GetFeeds(ctx, map[string]any{})
+	result, err := client.ExecuteOperation(ctx, "get_roto_data", map[string]any{})
 
 	if err != nil {
 		t.Fatalf("failed to get data from rotoreader: %v", err)

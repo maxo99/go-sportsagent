@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/maxo99/go-sportsagent/compare/v0.1.3...v0.2.0) (2025-11-10)
+
+
+### Features
+
+* updating service mapping for function construction ([b5670b7](https://github.com/maxo99/go-sportsagent/commit/b5670b78d7b61497833fd4af3dff84ecade902a9))
+
 ## [0.1.3](https://github.com/maxo99/go-sportsagent/compare/v0.1.2...v0.1.3) (2025-11-09)
 
 

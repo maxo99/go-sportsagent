@@ -1,6 +1,6 @@
 package version
 
-const Version = "0.1.3"
+const Version = "0.2.0"
 
 var (
 	BuildVersion = Version

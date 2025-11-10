@@ -48,10 +48,10 @@ func TestOddsTrackerClient_URLConfiguration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.envURL != "" {
-				os.Setenv("ODDSTRACKER_URL", tt.envURL)
-				defer os.Unsetenv("ODDSTRACKER_URL")
+				os.Setenv("ODDSTRACKER_SERVICE_URL", tt.envURL)
+				defer os.Unsetenv("ODDSTRACKER_SERVICE_URL")
 			} else {
-				os.Unsetenv("ODDSTRACKER_URL")
+				os.Unsetenv("ODDSTRACKER_SERVICE_URL")
 			}
 
 			client := NewOddsTrackerClient()

@@ -48,10 +48,10 @@ func TestRotoReaderClient_URLConfiguration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.envURL != "" {
-				os.Setenv("ROTOREADER_URL", tt.envURL)
-				defer os.Unsetenv("ROTOREADER_URL")
+				os.Setenv("ROTOREADER_SERVICE_URL", tt.envURL)
+				defer os.Unsetenv("ROTOREADER_SERVICE_URL")
 			} else {
-				os.Unsetenv("ROTOREADER_URL")
+				os.Unsetenv("ROTOREADER_SERVICE_URL")
 			}
 
 			client := NewRotoReaderClient()

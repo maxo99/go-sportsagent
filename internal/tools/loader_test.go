@@ -5,9 +5,35 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 )
+
+func TestLoadOpenAPISpecFromFile(t *testing.T) {
+	fixturePath := filepath.Join("..", "clients", "oddstracker", "testdata", "openapi.json")
+	if info, err := os.Stat(fixturePath); err != nil || info.Size() == 0 {
+		t.Skip("oddstracker OpenAPI fixture not available")
+	}
+
+	absPath, err := filepath.Abs(fixturePath)
+	if err != nil {
+		t.Fatalf("failed to resolve fixture path: %v", err)
+	}
+
+	spec, err := LoadOpenAPISpec(context.Background(), "file://"+absPath)
+	if err != nil {
+		t.Fatalf("failed to load OpenAPI spec from file: %v", err)
+	}
+
+	if spec == nil {
+		t.Fatal("expected non-nil spec")
+	}
+
+	if len(spec.Paths.Map()) == 0 {
+		t.Fatal("expected spec to contain at least one path")
+	}
+}
 
 func TestLoadOpenAPIFromServices(t *testing.T) {
 	if os.Getenv("INTEGRATION_TESTS") != "1" {
@@ -112,12 +138,12 @@ func TestConvertOpenAPIToOpenAITools(t *testing.T) {
 	defer cancel()
 
 	// Load specs from both services
-	urls := []string{
-		"http://localhost:8082/openapi.json",
-		"http://localhost:8081/openapi.json",
+	sources := []SpecSource{
+		{Service: ServiceOddsTracker, URL: "http://localhost:8082/openapi.json"},
+		{Service: ServiceRotoReader, URL: "http://localhost:8081/openapi.json"},
 	}
 
-	specs, err := LoadMultipleSpecs(ctx, urls)
+	specs, err := LoadMultipleSpecs(ctx, sources)
 	if err != nil {
 		t.Fatalf("Failed to load OpenAPI specs: %v", err)
 	}

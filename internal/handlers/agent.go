@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"sportsagent/internal/services"
 )
@@ -35,13 +36,13 @@ func (h *AgentHandler) HandleQuery(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	log.Println("Received query:", req.Query)
 	response, err := h.agentService.ProcessQuery(r.Context(), req.Query)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	log.Println("Sending response:", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(QueryResponse{Response: response})
 }

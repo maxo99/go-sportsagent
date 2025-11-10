@@ -3,18 +3,53 @@ package tools
 import (
 	"encoding/json"
 	"strings"
+	"sync"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/openai/openai-go/v3"
 )
 
+var (
+	toolServiceMap   = map[string]string{}
+	toolServiceMapMu sync.RWMutex
+)
+
+func resetToolServiceMappings() {
+	toolServiceMapMu.Lock()
+	defer toolServiceMapMu.Unlock()
+
+	toolServiceMap = map[string]string{}
+}
+
+func registerToolService(operationID, service string) {
+	if operationID == "" || service == "" {
+		return
+	}
+
+	toolServiceMapMu.Lock()
+	toolServiceMap[operationID] = service
+	toolServiceMapMu.Unlock()
+}
+
+func GetToolService(operationID string) (string, bool) {
+	toolServiceMapMu.RLock()
+	service, ok := toolServiceMap[operationID]
+	toolServiceMapMu.RUnlock()
+	return service, ok
+}
+
 // ConvertOpenAPIToTools converts OpenAPI specifications to OpenAI function tool definitions
-func ConvertOpenAPIToTools(specs []*openapi3.T) []openai.ChatCompletionToolUnionParam {
+func ConvertOpenAPIToTools(specs []ServiceSpec) []openai.ChatCompletionToolUnionParam {
 	tools := []openai.ChatCompletionToolUnionParam{}
 	skipOperationTerms := []string{"metrics", "health"}
+	resetToolServiceMappings()
 
-	for _, spec := range specs {
-		for _, pathItem := range spec.Paths.Map() {
+	for _, serviceSpec := range specs {
+		if serviceSpec.Spec == nil {
+			continue
+		}
+
+		for _, pathItem := range serviceSpec.Spec.Paths.Map() {
 			for _, operation := range pathItem.Operations() {
 				if operation == nil || operation.OperationID == "" {
 					continue
@@ -32,6 +67,8 @@ func ConvertOpenAPIToTools(specs []*openapi3.T) []openai.ChatCompletionToolUnion
 
 				// Convert parameters - OpenAPI schema is already JSON Schema compatible
 				params := buildParameters(operation)
+
+				registerToolService(operation.OperationID, serviceSpec.Service)
 
 				tools = append(tools, openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
 					Name:        operation.OperationID,

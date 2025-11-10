@@ -75,6 +75,25 @@ func (s *AgentService) executeToolCall(ctx context.Context, toolCall openai.Chat
 		var args map[string]interface{}
 		json.Unmarshal([]byte(functionToolCall.Function.Arguments), &args)
 
+		if serviceName, ok := tools.GetToolService(functionToolCall.Function.Name); ok {
+			switch serviceName {
+			case tools.ServiceRotoReader:
+				data, err := s.rotoreader.GetFeeds(ctx, args)
+				if err != nil {
+					return fmt.Sprintf("error: %v", err)
+				}
+				return data
+			case tools.ServiceOddsTracker:
+				data, err := s.oddstracker.GetChanges(ctx, args)
+				if err != nil {
+					return fmt.Sprintf("error: %v", err)
+				}
+				return data
+			default:
+				return fmt.Sprintf("error: unsupported service %s", serviceName)
+			}
+		}
+
 		switch functionToolCall.Function.Name {
 		case "get_roto_data":
 			data, err := s.rotoreader.GetFeeds(ctx, args)

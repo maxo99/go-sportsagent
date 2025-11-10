@@ -1,0 +1,701 @@
+
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/metrics": {
+      "get": {
+        "summary": "Metrics",
+        "description": "Endpoint that serves Prometheus metrics.",
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health",
+        "operationId": "health_check",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collect": {
+      "post": {
+        "tags": [
+          "DataCollection",
+          "SportEvents"
+        ],
+        "summary": "Collect SportEvents and BettingData",
+        "operationId": "collect_sportevents",
+        "parameters": [
+          {
+            "name": "provider_key",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "kambi",
+                "theoddsapi"
+              ],
+              "type": "string",
+              "default": "kambi",
+              "title": "Provider Key"
+            }
+          },
+          {
+            "name": "league",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "nfl",
+              "type": "string",
+              "default": "nfl",
+              "title": "League"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/event": {
+      "get": {
+        "tags": [
+          "SportEvents"
+        ],
+        "summary": "Sportevents",
+        "operationId": "get_sportevents",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SportEvent"
+                  },
+                  "type": "array",
+                  "title": "Response Get Sportevents"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/event/{event_id}": {
+      "get": {
+        "tags": [
+          "SportEvents"
+        ],
+        "summary": "Sporteventdata By Event Id",
+        "operationId": "get_sportevent_by_event_id",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SportEventData"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/event/{event_id}/offer/{offer_type}": {
+      "get": {
+        "tags": [
+          "SportEvents"
+        ],
+        "summary": "Sportevent Get Eventoffers",
+        "operationId": "get_sportevent_offers",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Event Id"
+            }
+          },
+          {
+            "name": "offer_type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Offer Type"
+            }
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Range"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/team": {
+      "get": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Get teams",
+        "operationId": "get_teams",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/team/{team_abbr}/events": {
+      "get": {
+        "tags": [
+          "SportEvents",
+          "Teams"
+        ],
+        "summary": "Get sport events for a team",
+        "operationId": "get_team_events",
+        "parameters": [
+          {
+            "name": "team_abbr",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Team Abbr"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/team/{team_abbr}/offers": {
+      "get": {
+        "tags": [
+          "SportEvents",
+          "Teams"
+        ],
+        "summary": "Get event offers for a team",
+        "operationId": "get_team_event_offers",
+        "parameters": [
+          {
+            "name": "team_abbr",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Team Abbr"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventOffer"
+                  },
+                  "title": "Response Get Team Event Offers"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/linemoves": {
+      "get": {
+        "tags": [
+          "OddsChanges"
+        ],
+        "summary": "Get line moves for sport events",
+        "operationId": "get_linemoves",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EventLineMovesResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get Linemoves"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CollectionResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "success"
+            ],
+            "title": "Status",
+            "default": "success"
+          },
+          "collected": {
+            "type": "integer",
+            "title": "Collected",
+            "default": 0
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version",
+            "default": "0.1.0"
+          },
+          "provider_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kambi",
+                  "theoddsapi"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Key"
+          }
+        },
+        "type": "object",
+        "title": "CollectionResponse"
+      },
+      "EventLineMovesResponse": {
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "home_team": {
+            "type": "string",
+            "title": "Home Team"
+          },
+          "away_team": {
+            "type": "string",
+            "title": "Away Team"
+          },
+          "sport_title": {
+            "type": "string",
+            "title": "Sport Title"
+          },
+          "commence_time": {
+            "type": "string",
+            "title": "Commence Time"
+          },
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/OfferChange"
+            },
+            "type": "array",
+            "title": "Changes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_id",
+          "home_team",
+          "away_team",
+          "sport_title",
+          "commence_time",
+          "changes"
+        ],
+        "title": "EventLineMovesResponse"
+      },
+      "EventOffer": {
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "bookmaker": {
+            "type": "string",
+            "title": "Bookmaker"
+          },
+          "offer_type": {
+            "type": "string",
+            "title": "Offer Type"
+          },
+          "choice": {
+            "type": "string",
+            "title": "Choice"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "point": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Point"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_id",
+          "bookmaker",
+          "offer_type",
+          "choice",
+          "timestamp",
+          "price"
+        ],
+        "title": "EventOffer"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "OfferChange": {
+        "properties": {
+          "bookmaker": {
+            "type": "string",
+            "title": "Bookmaker"
+          },
+          "choice": {
+            "type": "string",
+            "title": "Choice"
+          },
+          "offer_type": {
+            "type": "string",
+            "title": "Offer Type"
+          },
+          "old_price": {
+            "type": "number",
+            "title": "Old Price"
+          },
+          "new_price": {
+            "type": "number",
+            "title": "New Price"
+          },
+          "old_point": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Old Point"
+          },
+          "new_point": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Point"
+          },
+          "old_timestamp": {
+            "type": "string",
+            "title": "Old Timestamp"
+          },
+          "new_timestamp": {
+            "type": "string",
+            "title": "New Timestamp"
+          },
+          "price_changed": {
+            "type": "boolean",
+            "title": "Price Changed"
+          },
+          "point_changed": {
+            "type": "boolean",
+            "title": "Point Changed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bookmaker",
+          "choice",
+          "offer_type",
+          "old_price",
+          "new_price",
+          "old_point",
+          "new_point",
+          "old_timestamp",
+          "new_timestamp",
+          "price_changed",
+          "point_changed"
+        ],
+        "title": "OfferChange"
+      },
+      "SportEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "sport_key": {
+            "type": "string",
+            "title": "Sport Key"
+          },
+          "sport_title": {
+            "type": "string",
+            "title": "Sport Title"
+          },
+          "commence_time": {
+            "type": "string",
+            "title": "Commence Time"
+          },
+          "home_team": {
+            "type": "string",
+            "title": "Home Team"
+          },
+          "away_team": {
+            "type": "string",
+            "title": "Away Team"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "sport_key",
+          "sport_title",
+          "commence_time",
+          "home_team",
+          "away_team"
+        ],
+        "title": "SportEvent"
+      },
+      "SportEventData": {
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/SportEvent"
+          },
+          "offers": {
+            "items": {
+              "$ref": "#/components/schemas/EventOffer"
+            },
+            "type": "array",
+            "title": "Offers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event",
+          "offers"
+        ],
+        "title": "SportEventData"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

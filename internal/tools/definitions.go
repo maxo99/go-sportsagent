@@ -9,6 +9,11 @@ import (
 	"github.com/openai/openai-go/v3"
 )
 
+const (
+	ServiceRotoReader  = "rotoreader"
+	ServiceOddsTracker = "oddstracker"
+)
+
 // GetTools loads OpenAI function tools from OpenAPI specs of external services
 // Falls back to hardcoded definitions if OpenAPI specs are unavailable
 func GetTools() []openai.ChatCompletionToolUnionParam {
@@ -29,12 +34,12 @@ func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionPa
 	}
 
 	// Try to load OpenAPI specs from services
-	openAPIURLs := []string{
-		fmt.Sprintf("%s/openapi.json", rotoreaderURL),
-		fmt.Sprintf("%s/openapi.json", oddstrackerURL),
+	sources := []SpecSource{
+		{Service: ServiceRotoReader, URL: fmt.Sprintf("%s/openapi.json", rotoreaderURL)},
+		{Service: ServiceOddsTracker, URL: fmt.Sprintf("%s/openapi.json", oddstrackerURL)},
 	}
 
-	specs, err := LoadMultipleSpecs(ctx, openAPIURLs)
+	specs, err := LoadMultipleSpecs(ctx, sources)
 	if err != nil {
 		log.Printf("Warning: Failed to load OpenAPI specs, falling back to hardcoded definitions: %v", err)
 		return getFallbackTools()
@@ -54,6 +59,11 @@ func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionPa
 
 // getFallbackTools returns hardcoded tool definitions as a fallback
 func getFallbackTools() []openai.ChatCompletionToolUnionParam {
+	resetToolServiceMappings()
+
+	registerToolService("get_roto_data", ServiceRotoReader)
+	registerToolService("get_odds_data", ServiceOddsTracker)
+
 	return []openai.ChatCompletionToolUnionParam{
 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
 			Name:        "get_roto_data",

@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/openai/openai-go/v3"
+	"github.com/tmc/langchaingo/llms"
 )
 
 // ConvertOpenAPIToTools converts OpenAPI specifications to OpenAI function tool definitions
-func ConvertOpenAPIToTools(specs []ServiceSpec) []openai.ChatCompletionToolUnionParam {
-	tools := []openai.ChatCompletionToolUnionParam{}
+func ConvertOpenAPIToTools(specs []ServiceSpec) []llms.Tool {
+	tools := []llms.Tool{}
 	skipOperationTerms := []string{"metrics", "health"}
 	resetToolMetadata()
 
@@ -41,11 +41,14 @@ func ConvertOpenAPIToTools(specs []ServiceSpec) []openai.ChatCompletionToolUnion
 				metadata := buildToolMetadata(serviceSpec.Service, path, method, pathItem, operation)
 				registerToolMetadata(operation.OperationID, metadata)
 
-				tools = append(tools, openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
-					Name:        operation.OperationID,
-					Description: openai.String(desc),
-					Parameters:  params,
-				}))
+				tools = append(tools, llms.Tool{
+					Type: "function",
+					Function: &llms.FunctionDefinition{
+						Name:        operation.OperationID,
+						Description: desc,
+						Parameters:  params,
+					},
+				})
 			}
 		}
 	}
@@ -128,9 +131,9 @@ func shouldSkipOperation(operationID string, skipTerms []string) bool {
 	return false
 }
 
-func buildParameters(operation *openapi3.Operation) openai.FunctionParameters {
+func buildParameters(operation *openapi3.Operation) map[string]any {
 	// Start with base structure
-	params := openai.FunctionParameters{
+	params := map[string]any{
 		"type":       "object",
 		"properties": map[string]any{},
 	}

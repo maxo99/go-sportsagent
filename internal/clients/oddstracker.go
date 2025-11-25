@@ -20,7 +20,7 @@ type OddsTrackerClient struct {
 func NewOddsTrackerClient() *OddsTrackerClient {
 	baseURL := os.Getenv("ODDSTRACKER_SERVICE_URL")
 	if baseURL == "" {
-		baseURL = "http://localhost:8082"
+		baseURL = "http://localhost:8080"
 	}
 
 	return &OddsTrackerClient{

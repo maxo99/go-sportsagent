@@ -46,7 +46,7 @@ func TestConvertOpenAPIToToolsRegistersServices(t *testing.T) {
 	}
 
 	for _, tool := range tools {
-		fn := tool.GetFunction()
+		fn := tool.Function
 		if fn == nil {
 			continue
 		}

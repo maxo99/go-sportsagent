@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/openai/openai-go/v3"
+	"github.com/tmc/langchaingo/llms"
 )
 
 const (
@@ -17,12 +17,12 @@ const (
 
 // GetTools loads OpenAI function tools from OpenAPI specs of external services
 // Falls back to hardcoded definitions if OpenAPI specs are unavailable
-func GetTools() []openai.ChatCompletionToolUnionParam {
+func GetTools() []llms.Tool {
 	return GetToolsWithContext(context.Background())
 }
 
 // GetToolsWithContext loads tools with a custom context (useful for timeouts)
-func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionParam {
+func GetToolsWithContext(ctx context.Context) []llms.Tool {
 	// Get service URLs from environment or use defaults
 	rotoreaderURL := os.Getenv("ROTOREADER_SERVICE_URL")
 	if rotoreaderURL == "" {
@@ -31,7 +31,7 @@ func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionPa
 
 	oddstrackerURL := os.Getenv("ODDSTRACKER_SERVICE_URL")
 	if oddstrackerURL == "" {
-		oddstrackerURL = "http://localhost:8082"
+		oddstrackerURL = "http://localhost:8080"
 	}
 
 	// Try to load OpenAPI specs from services
@@ -59,7 +59,7 @@ func GetToolsWithContext(ctx context.Context) []openai.ChatCompletionToolUnionPa
 }
 
 // getFallbackTools returns hardcoded tool definitions as a fallback
-func getFallbackTools() []openai.ChatCompletionToolUnionParam {
+func getFallbackTools() []llms.Tool {
 	resetToolMetadata()
 
 	registerToolMetadata("get_roto_data", ToolMetadata{
@@ -73,22 +73,28 @@ func getFallbackTools() []openai.ChatCompletionToolUnionParam {
 		Path:    "/changes",
 	})
 
-	return []openai.ChatCompletionToolUnionParam{
-		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
-			Name:        "get_roto_data",
-			Description: openai.String("Get the latest sports news feed from rotoreader"),
-			Parameters: openai.FunctionParameters{
-				"type":       "object",
-				"properties": map[string]any{},
+	return []llms.Tool{
+		{
+			Type: "function",
+			Function: &llms.FunctionDefinition{
+				Name:        "get_roto_data",
+				Description: "Get the latest sports news feed from rotoreader",
+				Parameters: map[string]any{
+					"type":       "object",
+					"properties": map[string]any{},
+				},
 			},
-		}),
-		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
-			Name:        "get_odds_data",
-			Description: openai.String("Get recent betting odds changes from oddstracker"),
-			Parameters: openai.FunctionParameters{
-				"type":       "object",
-				"properties": map[string]any{},
+		},
+		{
+			Type: "function",
+			Function: &llms.FunctionDefinition{
+				Name:        "get_odds_data",
+				Description: "Get recent betting odds changes from oddstracker",
+				Parameters: map[string]any{
+					"type":       "object",
+					"properties": map[string]any{},
+				},
 			},
-		}),
+		},
 	}
 }

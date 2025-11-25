@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/maxo99/go-sportsagent/compare/v0.3.0...v0.4.0) (2025-11-25)
+
+
+### Features
+
+* update to langchaingo implementation ([4530e59](https://github.com/maxo99/go-sportsagent/commit/4530e59494952292a04e448faa0ea633c5799e22))
+
 # [0.3.0](https://github.com/maxo99/go-sportsagent/compare/v0.2.0...v0.3.0) (2025-11-10)
 
 
